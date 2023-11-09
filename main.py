@@ -22,19 +22,15 @@ def loadKey():
 
     label = customtkinter.CTkLabel(master = frame, text = "Load your API key", font=("Roboto", 24))
     label.pack(pady = 12, padx = 10)
-
+    
 
     api = customtkinter.CTkEntry(master=frame, placeholder_text="API key", show="*")
     api.pack(pady = 12, padx = 10)
-    #API_Key = api.get()
+    
 
     button = customtkinter.CTkButton(master=frame, text = "Load", command=load)
     button.pack(pady = 12, padx = 10)
 
-    '''
-    checkbox = customtkinter.CTkCheckBox(master = frame, text="Remember me",onvalue=1,offvalue=0)
-    checkbox.pack(pady = 12, padx = 10)
-    '''
     root.mainloop()
 
 def loadMain():
