@@ -1,5 +1,5 @@
 import openai
-import os
+#import os
 from config import OPENAI_API_KEY
 import textToSpeech
 import playAudio
@@ -21,22 +21,20 @@ def get_response(prompt):
             {"role": "user", "content": prompt},
         ],
     )
+    print(response.choices[0].message.content)
     with open("response.txt","w") as file:
         file.write(response.choices[0].message.content)
 
     textToSpeech.text_to_speech()
     playAudio.playSpeech()
 
-    ans = str(input("Continue..   （y/n）"))
-    if ans ==('y'):
-        get_prompt()
-    else: 
-        print("--end--")
+    #get_prompt()
     return
 
 
 def get_prompt():
-    recordSpeech.get_audio()
+    #recordSpeech.get_audio()
+    print("start transcribing..")
     prompt = speechToText.get_transcript()
     print(prompt)
     get_response(prompt) 

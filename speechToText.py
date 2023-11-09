@@ -12,3 +12,4 @@ def get_transcript():
     file=audio_file
   )
   return transcript.text
+

@@ -1,42 +1,101 @@
-import pyaudio 
-import wave
-in_path = "prompt.mp3" 
+import pyaudio
+import threading
+import time
+import start
+from pydub import AudioSegment
 
-def get_audio():
-    
-    
-    CHUNK = 1024
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1                # 声道数
-    RATE = 11025                # 采样率
-    RECORD_SECONDS = 10        # 录音时间
-    WAVE_OUTPUT_FILENAME = in_path
-    p = pyaudio.PyAudio()
+class Recorder:
+    def __init__(self):
+        self.CHUNK = 1024
+        self.FORMAT = pyaudio.paInt16
+        self.CHANNELS = 1
+        self.RATE = 44100
+        self.frames = []
+        self.is_recording = False
+        #self.init_stream()
+        self.recording_thread = None
 
-    stream = p.open(format=FORMAT,
-                        channels=CHANNELS,
-                        rate=RATE,
-                        input=True,
-                        frames_per_buffer=CHUNK)
+    def init_stream(self):
+        self.p = pyaudio.PyAudio()
+        self.stream = self.p.open(format=self.FORMAT,
+                                  channels=self.CHANNELS,
+                                  rate=self.RATE,
+                                  input=True,
+                                  frames_per_buffer=self.CHUNK)
 
-    print("*"*5, "I'm listening", "*"*5)
-    frames = []
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        frames.append(data)
-    print("*"*5, "Loading\n","*"*5)
+    def start_recording(self):
+        self.init_stream()
+        if self.is_recording:
+            print("Recording is already in progress.")
+            return
 
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+        self.is_recording = True
+        self.frames = []
 
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(p.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
-    wf.close()
+        # Starting a new thread for recording
+        self.recording_thread = threading.Thread(target=self._record)
+        self.recording_thread.start()
+        print("Recording started...")
+
+    def _record(self):
+        while self.is_recording:
+            
+            data = self.stream.read(self.CHUNK, exception_on_overflow = False)
+            self.frames.append(data)
+            
+
+    def stop_recording(self):
+        if not self.is_recording:
+            print("No recording in progress to stop.")
+            return
+
+        print("Stopping recording...")
+        self.is_recording = False
+
+        audio_segment = AudioSegment(
+            data=b''.join(self.frames),
+            sample_width=self.p.get_sample_size(self.FORMAT),
+            frame_rate=self.RATE,
+            channels=self.CHANNELS
+        )
+
+        if self.recording_thread is not None:
+            self.recording_thread.join()  # Wait for recording thread to finish
+
+        if self.stream is not None:
+            self.stream.stop_stream()
+            self.stream.close()
+            self.stream = None
+
+        if self.p is not None:
+            self.p.terminate()
+            self.p = None
+
+        # Assemble the frames and create an AudioSegment
+        
+
+        # Define the output filename with the mp3 extension
+        wave_output_filename = "prompt.mp3"
+
+        # Export the audio segment to an MP3 file
+        audio_segment.export(wave_output_filename, format="mp3")
+        print(f"File saved: {wave_output_filename}")
+        start.get_prompt()
+        
+
+'''
 
 
+# Start the recording process
+recorder.start_recording()
+recorder.start_recording()
+# You should only have one start and stop recording block like this
+# The sleep here simulates the wait time between starting and stopping the recording
+time.sleep(5)  # Record for 5 seconds
 
-
+# Stop the recording and save the file
+recorder.stop_recording()
+recorder.stop_recording()
+# If you want to record again, you would create a new instance of Recorder
+# or modify the class to allow re-initialization of the stream.
+'''
