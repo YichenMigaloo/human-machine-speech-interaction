@@ -1,6 +1,5 @@
 import pyaudio
 import threading
-import time
 import start
 from pydub import AudioSegment
 
@@ -83,19 +82,3 @@ class Recorder:
         start.get_prompt()
         
 
-'''
-
-
-# Start the recording process
-recorder.start_recording()
-recorder.start_recording()
-# You should only have one start and stop recording block like this
-# The sleep here simulates the wait time between starting and stopping the recording
-time.sleep(5)  # Record for 5 seconds
-
-# Stop the recording and save the file
-recorder.stop_recording()
-recorder.stop_recording()
-# If you want to record again, you would create a new instance of Recorder
-# or modify the class to allow re-initialization of the stream.
-'''

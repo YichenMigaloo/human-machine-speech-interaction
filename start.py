@@ -1,14 +1,10 @@
 import openai
-#import os
 from config import OPENAI_API_KEY
 import textToSpeech
 import playAudio
-import recordSpeech
 import speechToText
 
-
 openai.api_key = OPENAI_API_KEY
-
 openai.organization = "org-Zv09lXMbqC7TqcJFmH96zF6k"
 openai.models.list()
 
@@ -28,18 +24,13 @@ def get_response(prompt):
     textToSpeech.text_to_speech()
     playAudio.playSpeech()
 
-    #get_prompt()
     return
 
 
 def get_prompt():
-    #recordSpeech.get_audio()
     print("start transcribing..")
     prompt = speechToText.get_transcript()
     print(prompt)
     get_response(prompt) 
     return
-
-if __name__ == "__main__":
-    get_prompt()
 

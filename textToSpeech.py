@@ -1,4 +1,4 @@
-from pathlib import Path
+
 import openai
 from config import OPENAI_API_KEY
 
@@ -13,7 +13,7 @@ def text_to_speech():
   file = open("response.txt",'r')
   lines = file.read()
 
-  speech_file_path = Path(__file__).parent / "response.mp3"
+  speech_file_path = "response.mp3"
   response = openai.audio.speech.create(
     model="tts-1",
     voice="onyx",
