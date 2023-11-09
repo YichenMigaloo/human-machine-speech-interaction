@@ -4,8 +4,8 @@ This project is a human-machine-speech-interaction application implemented with 
 
 To make the project work, please check the following packages are installed:
 
-customtkinter
-pydub
-pyaudio
-threading
+customtkinter,
+pydub,
+pyaudio,
+threading, &
 openai
